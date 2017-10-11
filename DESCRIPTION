@@ -1,0 +1,11 @@
+Package: caeasciiR
+Title: Helper Functions for CAE Ascii Files.
+Version: 0.0.0.9000
+Authors@R: person("Eloy", "Tembras", email = "eloytf@gmail.com", role = c("aut", "trl", "cre"))
+Description: What the package does (one paragraph).
+Depends: R (>= 3.3.1)
+License: What license is it under? Eloy does not know.
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1.9000
+
