@@ -6,13 +6,13 @@
 #' @return a character vector with Optistruct cards
 #' @export
 #' @examples
-#' 
-#' 
+#'
+#'
 readFemLines <- function(file,nchars) {
-	
+
 	test<-readChar(file, nchars)
 	test<-gsub(pattern = "\\r\\n",replacement = "\r",test)
 	subbed<-gsub(pattern = "\\r(\\+| )",replacement = " ",test)
-	return(subbed)
-
+	unlisted<-unlist(strsplit(subbed,split = "\\r"))
+	return(unlisted)
 }
