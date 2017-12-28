@@ -8,4 +8,9 @@ The aim of this package is to read, edit and write CAE input decks into/with R. 
     
 ## Features
 
-The main use today is to manage big text files, since it allows to isolate cards by type into include files.
+For non-R users, the main use today is to manage big text files, since it allows to isolate cards by type into include files.
+R users may find other features useful, like the possibility to group cards with continuation lines into single lines, for easier regex.
+
+## Imports
+
+This package uses readr functions.
