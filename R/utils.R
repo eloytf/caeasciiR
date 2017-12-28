@@ -1,7 +1,7 @@
-library(readr)
-
-cards<-read_lines("./data/cards.txt")
-ffcards<-read_lines("./data/FFcards.txt")
+# library(readr)
+# 
+# cards<-read_lines("./data/cards.txt")
+# ffcards<-read_lines("./data/FFcards.txt")
 # fixedentities<-fem[getCardName(fem) %in% ffcards]
 # unsupported<-fem[!getCardName(fem) %in% ffcards]
 # readFemLines <- function(file,nchars) {
@@ -138,17 +138,14 @@ expandedlines2bulk<-function(lines) {
 #' @examples
 #'
 #'
-# ocards<-c("CHEXA","GRID")
-# includename<-"gridhexa.dat"
-# file<-"./tests/v287_nocomm_abq_RBE2_3_nC2_cntstb.fem"
 writeInclude<-function (file,ocards,includename,mastername){
 
   fem<-femtoCaseBulk(file)
   
   bulklines<-bulk2expandedlines(fem[2])
   bulk<-expandedlines2bulk(bulklines[!getCardName(bulklines)%in%ocards])
-  write_file(paste0(fem[1],"BEGIN BULK","\rINCLUDE ",includename,bulk,"\rENDDATA"),"test.fem")
-  write_lines(expandedlines2bulk(bulklines[getCardName(bulklines)%in%ocards]),includename)  
+  readr::write_file(paste0(fem[1],"BEGIN BULK","\rINCLUDE ",includename,bulk,"\rENDDATA"),"test.fem")
+  readr::write_lines(expandedlines2bulk(bulklines[getCardName(bulklines)%in%ocards]),includename)  
   
 }
 #' A Function for writing a master and include files from a merged fem
@@ -174,11 +171,11 @@ splitIntoIncludes<-function(file,mastername,sorted=F) {
   for (cards in ocards) {
     
     includename<-paste0(cards,".dat")
-    write_lines(expandedlines2bulk(bulklines[getCardName(bulklines)%in%cards]),includename) 
+    readr::write_lines(expandedlines2bulk(bulklines[getCardName(bulklines)%in%cards]),includename) 
       
   }
   bulk<-expandedlines2bulk(bulklines[!getCardName(bulklines)%in%ocards])
-  write_file(paste0(fem[1],"BEGIN BULK\r\n",paste0(paste0("INCLUDE ","'",ocards,".dat","'"),collapse = "\r\n"),bulk,"\r\nENDDATA"),mastername)
+  readr::write_file(paste0(fem[1],"BEGIN BULK\r\n",paste0(paste0("INCLUDE ","'",ocards,".dat","'"),collapse = "\r\n"),bulk,"\r\nENDDATA"),mastername)
   # write_lines(ocards,mastername)
   
 }
@@ -197,7 +194,7 @@ splitIntoIncludes<-function(file,mastername,sorted=F) {
 linesToDF<-function(lines,numberOfFields) {
   
   df<-paste0(lines,collapse = "\n")
-  df<-read_fwf(df,fwf_widths(rep(8,numberOfFields)))
+  df<-readr::read_fwf(df,readr::fwf_widths(rep(8,numberOfFields)))
   return(df)  
   
 }
