@@ -1,6 +1,6 @@
 # caeasciiR
 
-The aim of this package is to read, edit and write CAE input decks into/with R. Currently, the package focus lies in Optistruct and Nastran Dedecks, but the ultimate goal is to cover some more.
+The aim of this package is to read, edit and write CAE input decks into/with R. Currently, the package focus lies in Optistruct and Nastran decks, but the ultimate goal is to cover some more.
 
 ## Installation
 
