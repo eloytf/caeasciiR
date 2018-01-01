@@ -89,6 +89,7 @@ removeComments<-function(lines) {
 getCardName<-function(lines) {
   return(gsub("^(\\w{1,8}?\\b).*?$","\\1",substring(lines,first = 1,last = 8),perl = T))
 }
+# Parece leer mal el free-format
 #' A Function for extracting unique card images from bulk lines
 #'
 #' This function extracts the unique cards from a character vector of expanded lines
@@ -102,6 +103,7 @@ getUniqueCards <-function(lines) {
   uncommented<-lines[grep("(^$)|(^\\$)",lines,invert=T,perl=T)]
   return(gsub("^(\\w{1,8}?\\b).*?$","\\1",unique(substring(uncommented,first = 1,last = 8))))
 }
+# This has some problems, it seems, with free format.
 
 getShortCards<-function(lines) {
   shCards<-lines[getCardName(lines)%in%ffcards]
@@ -150,7 +152,7 @@ writeInclude<-function (file,ocards,includename,mastername){
 }
 #' A Function for writing a master and include files from a merged fem
 #'
-#' This function allows you to split a merged fem into includedes for each of the card types present in the bulk data section of the file. It removes comments.
+#' This function allows you to split a merged fem into includes for each of the card types present in the bulk data section of the file. It removes comments.
 #' @param file fem file
 #' @param mastername name of the master to write
 #' @param sorted if the cards need to be sorted in the include files (to diff, mostly)
@@ -159,7 +161,7 @@ writeInclude<-function (file,ocards,includename,mastername){
 #' @examples
 #'
 #'
-splitIntoIncludes<-function(file,mastername,sorted=F) {
+splitIntoIncludes<-function(file,mastername,sorted=F,asdf=F) {
   
   fem<-femtoCaseBulk(file)
   bulklines<-bulk2expandedlines(fem[2])
@@ -171,7 +173,20 @@ splitIntoIncludes<-function(file,mastername,sorted=F) {
   for (cards in ocards) {
     
     includename<-paste0(cards,".dat")
-    readr::write_lines(expandedlines2bulk(bulklines[getCardName(bulklines)%in%cards]),includename) 
+    
+    if (asdf) {
+      
+      block<-bulklines[getCardName(bulklines)%in%cards]
+      df<-linesToDF(block,max(nchar(block)))
+      lines<-dfTolines(df)
+      readr::write_lines(expandedlines2bulk(lines),includename) 
+      
+    } else {
+
+      readr::write_lines(expandedlines2bulk(bulklines[getCardName(bulklines)%in%cards]),includename) 
+      
+    }
+
       
   }
   bulk<-expandedlines2bulk(bulklines[!getCardName(bulklines)%in%ocards])
@@ -180,21 +195,97 @@ splitIntoIncludes<-function(file,mastername,sorted=F) {
   
 }
 
-#' A Function for 
+#' A Function for reading lines into a data frame
 #'
-#' This function allows you 
-#' @param file fem file
-#' @param mastername name of the master to write
-#' @param sorted if the cards need to be sorted in the include files (to diff, mostly)
-#' @return Nothing
+#' This function allows you transform fem expanded lines into a data frame
+#' @param lines expanded lines
+#' @param numberOfFields number of fields
+#' @return a data frame
 #' @export
 #' @examples
 #'
 #'
-linesToDF<-function(lines,numberOfFields) {
-  
-  df<-paste0(lines,collapse = "\n")
-  df<-readr::read_fwf(df,readr::fwf_widths(rep(8,numberOfFields)))
+linesToDF<-function(lines,numberOfFields = 9) {
+  if (length(lines)==1) {
+    df<-paste0(lines,"\n")
+  } else {
+
+    df<-paste0(lines,collapse = "\n")
+        
+  }
+
+  df<-readr::read_fwf(df,readr::fwf_widths(rep(8,numberOfFields)),readr::cols(.default = readr::col_character()))
+  df[is.na(df)]<-""
   return(df)  
+
+
+# read_fwf reads 5.3235-6 as character
   
 }
+
+#' A Function for printing a data frame into lines
+#'
+#' This function allows you transform fem expanded lines into a data frame
+#' @param df a data frame
+#' @param funct a format function. charFormatOs is the default, and recommended option for now.
+#' @return lines
+#' @export
+#' @examples
+#'
+#'
+#'
+dfTolines<-function(df,funct=charFormatOS) {
+  
+  # df[,1]<-lapply(df[,1],sprintf,fmt="%-8s")
+  # df[,-1]<-lapply(df[-1],sprintf,fmt="%8s")
+  df[]<-lapply(df,funct)
+  df<-do.call(paste0,df)
+  return(df)
+}
+
+#' A Function for formatting fields depending on its type 
+#'
+#' This function sprintfs the fields depending on its type. Mainly a helper function for dfTolines
+#' @param input input (character, numeric or integer)
+#' @return sprintfed input
+#' @examples
+#'
+#'
+#'
+
+shortFormatOS<-function(input) {
+  
+  type<-class(input)
+  switch(type,
+         character = sprintf(input,fmt = "%-8s"),
+         # numeric = sprintf(input,fmt= "%8f"),
+         # numeric = formatC(input,8),
+         numeric = sprintf(input,fmt = "%8g"),
+         integer = sprintf(input,fmt = "%8s")
+         )
+    
+}
+
+#' A Function for formatting fields as character
+#'
+#' This function sprintfs the fields as character "%-8s". Mainly a helper function for dfTolines
+#' @param input input (character, numeric or integer)
+#' @return sprintfed input
+#' @examples
+#'
+#'
+#'
+
+charFormatOS<-function(input) {
+  
+  # type<-class(input)
+  return(sprintf(input,fmt = "%-8s"))
+
+  
+}
+
+
+
+
+
+# I still need a way to identify and read free format.
