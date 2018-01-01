@@ -4,7 +4,7 @@
 \alias{splitIntoIncludes}
 \title{A Function for writing a master and include files from a merged fem}
 \usage{
-splitIntoIncludes(file, mastername, sorted = F)
+splitIntoIncludes(file, mastername, sorted = F, asdf = F)
 }
 \arguments{
 \item{file}{fem file}
@@ -17,7 +17,7 @@ splitIntoIncludes(file, mastername, sorted = F)
 Nothing
 }
 \description{
-This function allows you to split a merged fem into includedes for each of the card types present in the bulk data section of the file. It removes comments.
+This function allows you to split a merged fem into includes for each of the card types present in the bulk data section of the file. It removes comments.
 }
 \examples{
 

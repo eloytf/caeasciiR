@@ -2,22 +2,20 @@
 % Please edit documentation in R/utils.R
 \name{linesToDF}
 \alias{linesToDF}
-\title{A Function for}
+\title{A Function for reading lines into a data frame}
 \usage{
-linesToDF(lines, numberOfFields)
+linesToDF(lines, numberOfFields = 9)
 }
 \arguments{
-\item{file}{fem file}
+\item{lines}{expanded lines}
 
-\item{mastername}{name of the master to write}
-
-\item{sorted}{if the cards need to be sorted in the include files (to diff, mostly)}
+\item{numberOfFields}{number of fields}
 }
 \value{
-Nothing
+a data frame
 }
 \description{
-This function allows you
+This function allows you transform fem expanded lines into a data frame
 }
 \examples{
 
