@@ -155,15 +155,15 @@ writeInclude<-function (file,ocards,includename,mastername){
 #' This function allows you to split a merged fem into includes for each of the card types present in the bulk data section of the file. It removes comments.
 #' @param file fem file
 #' @param mastername name of the master to write
+#' @param path path to write the include files (will create folder)
 #' @param sorted if the cards need to be sorted in the include files (to diff, mostly)
 #' @return Nothing
 #' @export
 #' @examples
 #'
 #'
-splitIntoIncludes<-function(file,mastername,sorted=F,asdf=F) {
-  foldername<-paste0("./",unlist(strsplit(mastername,"\\."))[1])
-  dir.create(foldername)
+splitIntoIncludes<-function(file,mastername,path="./",sorted=F,asdf=F) {
+  dir.create(path)
   fem<-femtoCaseBulk(file)
   bulklines<-bulk2expandedlines(fem[2])
   ocards<-getUniqueCards(bulklines)
@@ -180,18 +180,18 @@ splitIntoIncludes<-function(file,mastername,sorted=F,asdf=F) {
       block<-bulklines[getCardName(bulklines)%in%cards]
       df<-linesToDF(block,max(nchar(block)))
       lines<-dfTolines(df)
-      readr::write_lines(expandedlines2bulk(lines),paste0(foldername,"./",includename))
+      readr::write_lines(expandedlines2bulk(lines),paste0(path,"./",includename))
       
     } else {
 
-      readr::write_lines(expandedlines2bulk(bulklines[getCardName(bulklines)%in%cards]),paste0(foldername,"./",includename)) 
+      readr::write_lines(expandedlines2bulk(bulklines[getCardName(bulklines)%in%cards]),paste0(path,"./",includename)) 
       
     }
 
       
   }
   bulk<-expandedlines2bulk(bulklines[!getCardName(bulklines)%in%ocards])
-  readr::write_file(paste0(fem[1],"BEGIN BULK\r\n",paste0(paste0("INCLUDE ","'",foldername,"/",ocards,".dat","'"),collapse = "\r\n"),bulk,"\r\nENDDATA"),mastername)
+  readr::write_file(paste0(fem[1],"BEGIN BULK\r\n",paste0(paste0("INCLUDE ","'",path,ocards,".dat","'"),collapse = "\r\n"),bulk,"\r\nENDDATA"),mastername)
   # write_lines(ocards,mastername)
   
 }
