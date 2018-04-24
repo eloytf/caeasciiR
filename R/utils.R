@@ -162,7 +162,8 @@ writeInclude<-function (file,ocards,includename,mastername){
 #'
 #'
 splitIntoIncludes<-function(file,mastername,sorted=F,asdf=F) {
-  
+  foldername<-paste0("./",unlist(strsplit(mastername,"\\."))[1])
+  dir.create(foldername)
   fem<-femtoCaseBulk(file)
   bulklines<-bulk2expandedlines(fem[2])
   ocards<-getUniqueCards(bulklines)
@@ -179,18 +180,18 @@ splitIntoIncludes<-function(file,mastername,sorted=F,asdf=F) {
       block<-bulklines[getCardName(bulklines)%in%cards]
       df<-linesToDF(block,max(nchar(block)))
       lines<-dfTolines(df)
-      readr::write_lines(expandedlines2bulk(lines),includename) 
+      readr::write_lines(expandedlines2bulk(lines),paste0(foldername,"./",includename))
       
     } else {
 
-      readr::write_lines(expandedlines2bulk(bulklines[getCardName(bulklines)%in%cards]),includename) 
+      readr::write_lines(expandedlines2bulk(bulklines[getCardName(bulklines)%in%cards]),paste0(foldername,"./",includename)) 
       
     }
 
       
   }
   bulk<-expandedlines2bulk(bulklines[!getCardName(bulklines)%in%ocards])
-  readr::write_file(paste0(fem[1],"BEGIN BULK\r\n",paste0(paste0("INCLUDE ","'",ocards,".dat","'"),collapse = "\r\n"),bulk,"\r\nENDDATA"),mastername)
+  readr::write_file(paste0(fem[1],"BEGIN BULK\r\n",paste0(paste0("INCLUDE ","'",foldername,"/",ocards,".dat","'"),collapse = "\r\n"),bulk,"\r\nENDDATA"),mastername)
   # write_lines(ocards,mastername)
   
 }
